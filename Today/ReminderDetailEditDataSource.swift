@@ -52,6 +52,13 @@ class ReminderDetailEditDataSource: NSObject {
 //    変更する時の実体
     var reminder: Reminder
     
+    private lazy var formatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .full
+        formatter.timeStyle = .short
+        return formatter
+    }()
+    
     init(reminder: Reminder) {
         self.reminder = reminder
     }
@@ -71,7 +78,7 @@ class ReminderDetailEditDataSource: NSObject {
                 }
             case .dueDate:
                 if indexPath.row == 0 {
-                    cell.textLabel?.text = reminder.dueDate.description
+                    cell.textLabel?.text = formatter.string(from: reminder.dueDate)
                 } else {
                     if let dueDateCell = cell as? EditDateCell {
                         dueDateCell.configure(date: reminder.dueDate)
@@ -103,5 +110,10 @@ extension ReminderDetailEditDataSource: UITableViewDataSource {
             fatalError("Section index out of range")
         }
         return section.displayText
+    }
+    
+//    セルが編集可能な場合、テーブル・ビューでは、セルを削除したり並べ替えたりするためのコントロールを表示
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return false
     }
 }
